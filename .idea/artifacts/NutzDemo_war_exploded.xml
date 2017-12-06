@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="NutzDemo:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/NutzDemo_war_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="NutzDemo/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="NutzDemo" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
