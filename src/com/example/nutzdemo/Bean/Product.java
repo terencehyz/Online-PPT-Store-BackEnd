@@ -24,6 +24,18 @@ public class Product {
     private int Way;
     @Column
     private double value;
+    @Column
+    private int checked;
+    @Column
+    private int DLCount;
+
+    public int getDLCount() {
+        return DLCount;
+    }
+
+    public void setDLCount(int DLCount) {
+        this.DLCount = DLCount;
+    }
 
     public String getTitle() {
         return Title;
@@ -88,4 +100,21 @@ public class Product {
     public double getValue() {
         return value;
     }
+
+    public int getChecked() {
+        return checked;
+    }
+
+    public void setChecked(int checked) {
+        this.checked = checked;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
 }

@@ -1,9 +1,6 @@
 package com.example.nutzdemo.Module;
 
-import com.example.nutzdemo.Bean.Cart;
-import com.example.nutzdemo.Bean.Product;
-import com.example.nutzdemo.Bean.Purchase;
-import com.example.nutzdemo.Bean.User;
+import com.example.nutzdemo.Bean.*;
 import com.example.nutzdemo.Util.Toolkit;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
@@ -63,6 +60,12 @@ public class CustomerModule {
         dao.insert(purchase);
         Cart tempCart = dao.fetch(Cart.class, Cnd.where("Pid", "=", Pid).and("Uid", "=", Uid));
         dao.delete(tempCart);
+        // TODO
+//        User user = dao.fetch(User.class, Cnd.where("id", "=", Uid));
+//        user.setNickName(nickName);
+//        dao.update(user);
+
+
         return Toolkit.getSuccessResult(null, "购买成功");
     }
 
@@ -75,7 +78,11 @@ public class CustomerModule {
                            @Param("Pid") int Pid) {
         Purchase purchase = dao.fetch(Purchase.class, Cnd.where("Uid", "=", Uid).and("Pid", "=", Pid));
         if (purchase == null) {
-            return Toolkit.getFailResult(-1, "未购买");
+            Upload upload = dao.fetch(Upload.class, Cnd.where("Uid","=",Uid).and("Pid","=",Pid));
+            if (upload==null)
+                return Toolkit.getFailResult(-1, "未购买");
+            else
+                return Toolkit.getSuccessResult(null, "已购买");
         } else {
             return Toolkit.getSuccessResult(null, "已购买");
         }
@@ -175,6 +182,19 @@ public class CustomerModule {
     public Object getUserInfo(@Param("Uid") int Uid) {
         User user = dao.fetch(User.class, Cnd.where("id", "=", Uid));
         return Toolkit.getSuccessResult(user, "获取成功");
+    }
+
+    @At("/modifyUser")
+    @Ok("json:{locked:'password'}")
+    @Fail("http:403")
+    @POST
+    @Filters(@By(type = CrossOriginFilter.class))
+    public Object modifyUser(@Param("Uid") int Uid,
+                             @Param("NickName")String nickName) {
+        User user = dao.fetch(User.class, Cnd.where("id", "=", Uid));
+        user.setNickName(nickName);
+        dao.update(user);
+        return Toolkit.getSuccessResult(user, "修改成功");
     }
 
 }

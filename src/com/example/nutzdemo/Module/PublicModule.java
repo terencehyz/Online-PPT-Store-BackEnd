@@ -135,7 +135,7 @@ public class PublicModule {
     @Fail("http:403")
     @Filters(@By(type = CrossOriginFilter.class))
     public Object getAll(HttpServletRequest request) {
-        List<Product> products = dao.query(Product.class, null);
+        List<Product> products = dao.query(Product.class, Cnd.where("checked","=",1));
         return Toolkit.getSuccessResult(products, "获取成功");
     }
 
@@ -145,7 +145,7 @@ public class PublicModule {
     @Filters(@By(type = CrossOriginFilter.class))
     public Object getByType(@Param("type") int type,
                             HttpServletRequest request) {
-        List<Product> products = dao.query(Product.class, Cnd.where("Type", "=", type));
+        List<Product> products = dao.query(Product.class, Cnd.where("Type", "=", type).and("checked","=",1));
         if (products.size() < 1) return Toolkit.getFailResult(-1, "没有此类型");
         return Toolkit.getSuccessResult(products, "获取成功ByType");
     }
@@ -156,7 +156,7 @@ public class PublicModule {
     @Filters(@By(type = CrossOriginFilter.class))
     public Object getByWay(@Param("way") int way,
                            HttpServletRequest request) {
-        List<Product> products = dao.query(Product.class, Cnd.where("Way", "=", way));
+        List<Product> products = dao.query(Product.class, Cnd.where("Way", "=", way).and("checked","=",1));
         if (products.size() < 1) return Toolkit.getFailResult(-1, "没有此风格");
         return Toolkit.getSuccessResult(products, "获取成功ByWay");
     }
@@ -184,8 +184,8 @@ public class PublicModule {
             e.printStackTrace();
         }
         System.out.println(ls);
-        List<Product> products1 = dao.query(Product.class, Cnd.where("Title", "LIKE", '%' + ls + '%'));
-        List<Product> products2 = dao.query(Product.class, Cnd.where("Description", "LIKE", '%' + ls + '%'));
+        List<Product> products1 = dao.query(Product.class, Cnd.where("Title", "LIKE", '%' + ls + '%').and("checked","=",1));
+        List<Product> products2 = dao.query(Product.class, Cnd.where("Description", "LIKE", '%' + ls + '%').and("checked","=",1));
         List<Product> mylist = new ArrayList<Product>();
         mylist.addAll(products1);
         mylist.addAll(products2);

@@ -1,4 +1,5 @@
-﻿package com.example.nutzdemo.Util;
+
+package com.example.nutzdemo.Util;
 
 import com.sun.mail.util.MailSSLSocketFactory;
 
@@ -42,7 +43,7 @@ public class TestMail {
         msg.setFrom(new InternetAddress("your mail"));
 
         Transport transport = session.getTransport();
-        transport.connect("smtp.qq.com", "your mail", "password");
+        transport.connect("smtp.qq.com", "1455723823@qq.com", "Boyhood1996");
 
         transport.sendMessage(msg, new Address[] { new InternetAddress(targetMail) });
         transport.close();
