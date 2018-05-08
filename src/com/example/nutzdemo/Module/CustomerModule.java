@@ -197,4 +197,21 @@ public class CustomerModule {
         return Toolkit.getSuccessResult(user, "修改成功");
     }
 
+    @At("/getUploaded")
+    @Ok("json")
+    @Fail("http:403")
+    @GET
+    @Filters(@By(type = CrossOriginFilter.class))
+    public Object getUploaded(@Param("Uid") int Uid,
+                              HttpServletRequest request) {
+        List<Upload> uploads = dao.query(Upload.class, Cnd.where("Uid","=",Uid));
+        List<Product> products = new ArrayList<Product>();
+        for (int i = 0; i < uploads.size(); i++) {
+            Product product = dao.fetch(Product.class, Cnd.where("id", "=", uploads.get(i).getPid()));
+            if (product != null)
+                products.add(product);
+        }
+        return Toolkit.getSuccessResult(products, "获取成功");
+    }
+
 }

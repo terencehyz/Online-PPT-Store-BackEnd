@@ -31,6 +31,7 @@ public class PublicModule {
     @Inject
     Dao dao;
 
+    //登录
     @At("/login")
     @Ok("json")
     @Fail("http:403")
@@ -55,6 +56,27 @@ public class PublicModule {
         }
     }
 
+    //忘记密码
+    @At("/forgetPW")
+    @Ok("json")
+    @Fail("http:403")
+    @POST
+    @Filters(@By(type = CrossOriginFilter.class))
+    public Object forgetPW(@Param("email") String email,
+                           @Param("code") String code,
+                           @Param("Password") String password){
+        if (email == null || password == null || code == null) {
+            return Toolkit.getFailResult(-1, "结构验证错误");
+        }
+        VerificationCode codeVaild = dao.fetch(VerificationCode.class, Cnd.where("email", "=", email).and("code", "=", code).and("vaild", "=", 1));
+        if (codeVaild == null)
+            return Toolkit.getFailResult(-3, "验证码错误");
+        dao.update(User.class, Chain.make("password",password), Cnd.where("email","=",email));
+        dao.update(VerificationCode.class, Chain.make("vaild", 0), Cnd.where("email", "=", email));
+        return Toolkit.getSuccessResult(null,"修改成功");
+    }
+
+    //发送验证码
     @At("/send")
     @Ok("json")
     @Fail("http:403")
@@ -72,7 +94,7 @@ public class PublicModule {
         return Toolkit.getSuccessResult(null, "发送成功");
     }
 
-
+    //获取验证码
     @At("/getVcode")
     @Ok("json")
     @Fail("http:403")
@@ -101,6 +123,7 @@ public class PublicModule {
         return Toolkit.getSuccessResult(null, "成功获取验证码");
     }
 
+    //注册
     @At("/register")
     @Ok("json")
     @Fail("http:403")
@@ -130,6 +153,7 @@ public class PublicModule {
         return Toolkit.getSuccessResult(null, "注册成功");
     }
 
+    //返回所有已审核商品商品
     @At("/getAll")
     @Ok("json:{locked:'Download'}")
     @Fail("http:403")
@@ -139,6 +163,17 @@ public class PublicModule {
         return Toolkit.getSuccessResult(products, "获取成功");
     }
 
+    //返回所有未审核商品
+    @At("/getVerify")
+    @Ok("json")
+    @Fail("http:403")
+    @Filters(@By(type = CrossOriginFilter.class))
+    public Object getVerify(HttpServletRequest request) {
+        List<Product> products = dao.query(Product.class, Cnd.where("checked","=",0));
+        return Toolkit.getSuccessResult(products, "获取成功");
+    }
+
+    //返回商品byType
     @At("/getByType")
     @Ok("json:{locked:'Download'}")
     @Fail("http:403")
@@ -150,6 +185,7 @@ public class PublicModule {
         return Toolkit.getSuccessResult(products, "获取成功ByType");
     }
 
+    //返回商品byWay
     @At("/getByWay")
     @Ok("json:{locked:'Download'}")
     @Fail("http:403")
@@ -161,6 +197,7 @@ public class PublicModule {
         return Toolkit.getSuccessResult(products, "获取成功ByWay");
     }
 
+    //产品详情
     @At("/getProudctDetail")
     @Ok("json")
     @Fail("http:403")
@@ -171,6 +208,7 @@ public class PublicModule {
         return Toolkit.getSuccessResult(products, "获取成功ById");
     }
 
+    //查询
     @At("/Query")
     @Ok("json")
     @Fail("http:403")
