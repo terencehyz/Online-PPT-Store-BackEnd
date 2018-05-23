@@ -2,6 +2,7 @@ package com.example.nutzdemo.Module;
 
 import com.example.nutzdemo.Bean.Product;
 import com.example.nutzdemo.Bean.Upload;
+import com.example.nutzdemo.Bean.User;
 import com.example.nutzdemo.Util.Toolkit;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
@@ -13,7 +14,7 @@ import org.nutz.mvc.filter.CrossOriginFilter;
 @IocBean
 @Fail("http:500")
 @Filters(@By(type = CrossOriginFilter.class))
-public class SellerModule {
+public class AdminModule {
     @Inject
     Dao dao;
 
@@ -21,6 +22,7 @@ public class SellerModule {
     @Ok("json")
     @Fail("http:403")
     @POST
+    @Filters(@By(type = CrossOriginFilter.class))
     public Object addProduct(@Param("Title") String Title,
                              @Param("Description") String Description,
                              @Param("Thumbnail") String Thumbnail,
@@ -52,5 +54,36 @@ public class SellerModule {
         upload.setPid(product.getId());
         dao.insert(upload);
         return Toolkit.getSuccessResult(null, "添加成功！");
+    }
+
+    @At("/verifySuccess")
+    @Ok("json")
+    @Fail("http:403")
+    @POST
+    @Filters(@By(type = CrossOriginFilter.class))
+    public Object verifySuccess(@Param("Pid") int Pid) {
+        Product product = dao.fetch(Product.class, Cnd.where("id","=",Pid));
+        product.setChecked(1);
+        dao.update(product);
+
+        Upload upload = dao.fetch(Upload.class, Cnd.where("Pid","=",Pid));
+
+        User user = dao.fetch(User.class,Cnd.where("id","=",upload.getUid()));
+        user.setCredit(user.getCredit()+100);
+        dao.update(user);
+
+        return Toolkit.getSuccessResult(null, "审核完成：通过");
+    }
+
+    @At("/verifyFailed")
+    @Ok("json")
+    @Fail("http:403")
+    @POST
+    @Filters(@By(type = CrossOriginFilter.class))
+    public Object verifyFailed(@Param("Pid") int Pid) {
+        Product product = dao.fetch(Product.class, Cnd.where("id","=",Pid));
+        product.setChecked(2);
+        dao.update(product);
+        return Toolkit.getSuccessResult(null, "审核完成:不通过");
     }
 }

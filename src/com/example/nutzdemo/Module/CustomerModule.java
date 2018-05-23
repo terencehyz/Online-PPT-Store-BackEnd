@@ -21,6 +21,7 @@ public class CustomerModule {
     @Inject
     Dao dao;
 
+    //添加到购物车
     @At("/addToCart")
     @Ok("json")
     @Fail("http:403")
@@ -40,6 +41,7 @@ public class CustomerModule {
         return Toolkit.getSuccessResult(carts, "加入成功！");
     }
 
+    //单独购买
     @At("/Signalpurchase")
     @Ok("json")
     @Fail("http:403")
@@ -69,6 +71,7 @@ public class CustomerModule {
         return Toolkit.getSuccessResult(null, "购买成功");
     }
 
+    //下载链接是否可见
     @At("/visiable")
     @Ok("json")
     @Fail("http:403")
@@ -88,6 +91,7 @@ public class CustomerModule {
         }
     }
 
+    //获取购物车信息
     @At("/getCart")
     @Ok("json")
     @Fail("http:403")
@@ -104,6 +108,7 @@ public class CustomerModule {
         return Toolkit.getSuccessResult(products, "获取成功");
     }
 
+    //获取已购买项目
     @At("/getPurchase")
     @Ok("json")
     @Fail("http:403")
@@ -121,6 +126,7 @@ public class CustomerModule {
         return Toolkit.getSuccessResult(products, "获取成功");
     }
 
+    //结算
     @At("/checkOut")
     @Ok("json")
     @Fail("http:403")
@@ -151,6 +157,7 @@ public class CustomerModule {
                 Cart cart = dao.fetch(Cart.class, Cnd.where("Uid", "=", Uid).and("Pid", "=", arrayList[i]));
                 dao.delete(cart);
                 dao.insert(list.get(i));
+
             }
             dao.update(User.class, Chain.make("credit", userCredit - cost), Cnd.where("id", "=", Uid));
             return Toolkit.getSuccessResult(null, "购买成功！");
@@ -159,6 +166,7 @@ public class CustomerModule {
         }
     }
 
+    //增加余额
     @At("/addCredit")
     @Ok("json:{locked:'password'}")
     @Fail("http:403")
@@ -174,6 +182,7 @@ public class CustomerModule {
         return Toolkit.getSuccessResult(dao.fetch(User.class, Cnd.where("id", "=", Uid)), "充值成功！");
     }
 
+    //获取用户详细信息
     @At("/getUserInfo")
     @Ok("json:{locked:'password'}")
     @Fail("http:403")
@@ -184,6 +193,7 @@ public class CustomerModule {
         return Toolkit.getSuccessResult(user, "获取成功");
     }
 
+    //修改用户信息
     @At("/modifyUser")
     @Ok("json:{locked:'password'}")
     @Fail("http:403")
@@ -197,6 +207,7 @@ public class CustomerModule {
         return Toolkit.getSuccessResult(user, "修改成功");
     }
 
+    //获取上传信息
     @At("/getUploaded")
     @Ok("json")
     @Fail("http:403")

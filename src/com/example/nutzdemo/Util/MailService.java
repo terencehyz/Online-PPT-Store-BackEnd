@@ -11,7 +11,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
-public class TestMail {
+public class MailService {
     public static void sendMail(String targetMail,String code,int type) throws Exception {
         Properties props = new Properties();
         // 开启debug调试

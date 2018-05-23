@@ -4,7 +4,7 @@ import com.example.nutzdemo.Bean.Product;
 import com.example.nutzdemo.Bean.User;
 import com.example.nutzdemo.Bean.VerificationCode;
 import com.example.nutzdemo.Util.MD5Utils;
-import com.example.nutzdemo.Util.TestMail;
+import com.example.nutzdemo.Util.MailService;
 import com.example.nutzdemo.Util.Toolkit;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
@@ -15,10 +15,8 @@ import org.nutz.mvc.annotation.*;
 import org.nutz.mvc.filter.CrossOriginFilter;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -87,7 +85,7 @@ public class PublicModule {
         Product product = dao.fetch(Product.class, Cnd.where("id", "=", id));
         String url = product.getDownload();
         try {
-            TestMail.sendMail(email, url, 1);
+            MailService.sendMail(email, url, 1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -116,7 +114,7 @@ public class PublicModule {
         vcode.setVaild(1);
         dao.insert(vcode);
         try {
-            TestMail.sendMail(email, code, 2);
+            MailService.sendMail(email, code, 2);
         } catch (Exception e) {
             e.printStackTrace();
         }
