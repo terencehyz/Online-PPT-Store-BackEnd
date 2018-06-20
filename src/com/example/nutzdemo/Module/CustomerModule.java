@@ -7,6 +7,7 @@ import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.log.Log;
 import org.nutz.mvc.annotation.*;
 import org.nutz.mvc.filter.CrossOriginFilter;
 
@@ -60,6 +61,26 @@ public class CustomerModule {
         purchase.setUid(Uid);
         purchase.setPid(Pid);
         dao.insert(purchase);
+
+        String msg="购买成功";
+        double temp=user.getCredit()-product.getValue();
+        user.setCredit(temp);
+        dao.update(user,"^credit$");
+        //msg+=user.getCredit();
+
+
+        Upload upload=dao.fetch(Upload.class,Cnd.where("pid","=",product.getId()));
+
+        if(upload!=null){
+            User owner=dao.fetch(User.class,Cnd.where("id","=",upload.getUid()));
+            temp=product.getValue()+owner.getCredit();
+            owner.setCredit(temp);
+            dao.update(owner,"^credit$");
+
+        }
+
+
+
         Cart tempCart = dao.fetch(Cart.class, Cnd.where("Pid", "=", Pid).and("Uid", "=", Uid));
         dao.delete(tempCart);
         // TODO
@@ -68,7 +89,7 @@ public class CustomerModule {
 //        dao.update(user);
 
 
-        return Toolkit.getSuccessResult(null, "购买成功");
+        return Toolkit.getSuccessResult(null, msg);
     }
 
     //下载链接是否可见
@@ -158,6 +179,17 @@ public class CustomerModule {
                 dao.delete(cart);
                 dao.insert(list.get(i));
 
+                Product product=dao.fetch(Product.class,Cnd.where("id","=",arrayList[i]));
+                Upload upload=dao.fetch(Upload.class,Cnd.where("pid","=",product.getId()));
+
+                if(upload!=null){
+                    User owner=dao.fetch(User.class,Cnd.where("id","=",upload.getUid()));
+
+                    double temp=product.getValue()+owner.getCredit();
+                    owner.setCredit(temp);
+                    dao.update(owner,"^credit$");
+
+                }
             }
             dao.update(User.class, Chain.make("credit", userCredit - cost), Cnd.where("id", "=", Uid));
             return Toolkit.getSuccessResult(null, "购买成功！");
